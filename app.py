@@ -128,13 +128,10 @@ class App:
     def end_game_screen(game_status):
         terminate = Text(f'{game_status}', (1420, 288), bold=False, size=48)
 
-
         new_game = False
 
         while not new_game:
-
             for event in pygame.event.get():
-
                 if event.type == QUIT:
                     App().quit()
                 if event.type == MOUSEBUTTONDOWN:
@@ -165,7 +162,6 @@ class App:
         """Run the main event loop."""
 
         App.load_cards()
-
         back_card, back_card_rect = load_image('card-back.jpg')
         back_card_rect.center = (App.SIZE[0] / 3 + 170, 210 )
 
@@ -177,36 +173,40 @@ class App:
                 if event.type == QUIT:
                     App.RUNNING = False
                 elif event.type == MOUSEBUTTONDOWN:
+                    # HANDLE HIT FUMCTIONALITY
                     if btn_hit.get_rect().collidepoint(event.pos):
                         if App.player_hand < 21:
                             card_value = draw_card()
                             App.player_hand += card_value
                             if App.player_hand >= 21:
                                 App.deal()
-
                             App.player_cards.append(card_value)
                         else:
                             App.deal()
 
+                    # HANDLE DEAL FUMCTIONALITY
                     elif btn_deal.get_rect().collidepoint((event.pos)):
                         App.deal()
 
+                    # HANDLE STAND FUMCTIONALITY
                     elif btn_stand.get_rect().collidepoint(event.pos):
                         App.deal()
 
 
 
-            # Draw on screen
+            # DRAW ELEMENTS ON THE SCREEN BEFORE UPDATING
             App.SCREEN.fill(Color(13, 148, 136))
             App.t.draw()
             App.dealer_section.draw()
             App.player_section.draw()
             App.draw_cards(App.dealer_cards[0], is_dealer_card=True)
+            # DRAW CARD WHEN PLAYER DRAWS THE CARD
             for indx, card in enumerate(App.player_cards):
                 App.draw_cards(card, n_card_drawn=indx)
             App.SCREEN.blit(back_card, back_card_rect)
             App.player_section.update(f'Your Hand: {App.player_hand}')
 
+            # DRAW DEALER CARDS IF ITS DEALER'S TURN
             if App.dealing:
                 for indx, card in enumerate(App.dealer_cards):
                     App.draw_cards(card, is_dealer_card=True, n_card_drawn=indx)
@@ -215,6 +215,7 @@ class App:
             btn_hit = Button((50, 250), text='Hit')
             btn_stand = Button((50, 350), text='Stand')
 
+            # DISPLAY ENDSCREEN IF GAME'S UP
             if App.game_up:
                 game_status = (print_end_game_status(App.player_hand, App.dealer_hand))
                 App.end_game_screen(game_status)
